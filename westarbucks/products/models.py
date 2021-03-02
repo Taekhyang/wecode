@@ -1,16 +1,12 @@
 from django.db import models
 
 
-# Create your models here.
-class Drink(models.Model):
-    korean_name  = models.CharField(max_length=45)
-    english_name = models.CharField(max_length=45)
-    description  = models.TextField(max_length=1000)
-    category     = models.ForeignKey('Category', on_delete=models.CASCADE)
+class Menu(models.Model):
+    name = models.CharField(max_length=45)
 
     class Meta(object):
-        db_table = 'drinks'
-        
+        db_table = 'menus'
+
 
 class Category(models.Model):
     name = models.CharField(max_length=45)
@@ -20,11 +16,36 @@ class Category(models.Model):
         db_table = 'categories'
 
 
-class Menu(models.Model):
+class Drink(models.Model):
+    korean_name  = models.CharField(max_length=45)
+    english_name = models.CharField(max_length=45)
+    description  = models.TextField(max_length=1000)
+    category     = models.ForeignKey('Category', on_delete=models.CASCADE)
+
+    allergy_drink = models.ManyToManyField(
+                                           'Allergy',
+                                           through='AllergyDrink',
+                                         # through_fields=('drink', 'allergy'),
+                                           blank=True
+                                          )
+
+    class Meta(object):
+        db_table = 'drinks'
+
+
+class Allergy(models.Model):
     name = models.CharField(max_length=45)
 
     class Meta(object):
-        db_table = 'menus'
+        db_table = 'allergies'
+
+
+class AllergyDrink(models.Model):
+    drink   = models.ForeignKey('Drink', on_delete=models.CASCADE, null=True)
+    allergy = models.ForeignKey('Allergy', on_delete=models.CASCADE, null=True)
+
+    class Meta(object):
+        db_table = 'allergies_drinks'
 
 
 class Image(models.Model):
@@ -33,13 +54,6 @@ class Image(models.Model):
 
     class Meta(object):
         db_table = 'images'
-
-
-class Allergy(models.Model):
-    name = models.CharField(max_length=45)
-
-    class Meta(object):
-        db_table = 'allergy'
 
 
 class Nutrition(models.Model):
@@ -55,11 +69,3 @@ class Nutrition(models.Model):
 
     class Meta(object):
         db_table = 'nutritions'
-
-
-class AllergyDrink(models.Model):
-    drink   = models.ForeignKey('Drink', on_delete=models.CASCADE)
-    allergy = models.ForeignKey('Allergy', on_delete=models.CASCADE)
-
-    class Meta(object):
-        db_table = 'allergy_drink'

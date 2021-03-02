@@ -6,7 +6,6 @@ from django.http      import JsonResponse
 
 from .models import Drink, Category, Menu
 
-# Create your views here.
 
 class CategoryView(View):
     def get(self, request):
